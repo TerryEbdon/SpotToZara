@@ -1,0 +1,28 @@
+plugins {
+  id 'groovy'
+
+  // Apply the application plugin to add support for building a CLI application in Java.
+  id 'application'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.codehaus.groovy:groovy-all:3.0.9'
+
+  // This dependency is used by the application.
+  implementation 'com.google.guava:guava:30.1.1-jre'
+  implementation 'org:jaudiotagger:2.0.3'
+
+  testImplementation 'junit:junit:4.13.2'
+}
+
+application {
+  mainClass = 'net.ebdon.spottozara.SpotToZara'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
