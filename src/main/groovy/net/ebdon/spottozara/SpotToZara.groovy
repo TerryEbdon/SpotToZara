@@ -1,6 +1,5 @@
 package net.ebdon.spottozara
 
-import groovy.xml.XmlSlurper
 import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3AudioHeader
@@ -9,6 +8,7 @@ import java.util.logging.Level
 
 @groovy.util.logging.Log4j2
 class SpotToZara {
+  public static Logger audioTagLogger = Logger.getLogger('org.jaudiotagger')
   final String m3uFileType  = '.m3u8'
   final String zaraFileType = '.lst'
   final String m3u8FileName
@@ -52,13 +52,13 @@ class SpotToZara {
   }
 
   void fixMetadata() {
-    Logger.getLogger("org.jaudiotagger").setLevel(Level.WARNING)
+    audioTagLogger.setLevel(Level.WARNING)
     int fixedCount = 0
     m3u8.each { trackNo, details ->
       if ( details.first() < 1 ) {
-        // println "Fixing track $trackNo with length ${details[0]}"
+        log.debug "Fixing track $trackNo with length ${details[0]}"
         String trackFileName = details[1]
-        // println trackFileName
+        log.debug trackFileName
         File trackFile = new File( trackFileName ) 
         AudioFile audioFile = AudioFileIO.read( trackFile )
 
@@ -67,11 +67,12 @@ class SpotToZara {
         Long newlength = Long.parseLong( newLengthStr )
         Long mins = newlength / 60
         Long secs = newlength % 60 
-        // println "New length: $newLengthStr = $mins mins, $secs secs"
+        log.debug "New length: $newLengthStr = $mins mins, $secs secs"
         details[0]= newlength
         ++fixedCount
       }
     }
+    log.info "Fixed $fixedCount track lengths."
     println "Fixed $fixedCount track lengths."
   }
 
@@ -92,13 +93,13 @@ class SpotToZara {
         }
         case '#EXTINF': {    // length, artist - name
           ++trackNo
-          // println "EXTINF  line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
+          log.trace "EXTINF  line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
           assert lineNo > 1 && lineNo % 2 == 0
           trackLength = Long.parseLong( line.split(/(EXTINF:)|(,)/)[1] )
           break
         }
         default: { // file name
-          // println "default line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
+          log.trace "default line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
           assert lineNo > 1 && lineNo % 2 == 1
           m3u8[trackNo] = [trackLength, line]
         }
