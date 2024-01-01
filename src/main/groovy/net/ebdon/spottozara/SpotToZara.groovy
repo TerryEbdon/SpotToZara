@@ -7,6 +7,7 @@ import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import java.util.logging.Logger
 import java.util.logging.Level
 
+@groovy.util.logging.Log4j2
 class SpotToZara {
   final String m3uFileType  = '.m3u8'
   final String zaraFileType = '.lst'
@@ -18,7 +19,7 @@ class SpotToZara {
     if ( args.size() != 1 ) {
       println "Usage: SpotToZara {spotfile}"
     } else {
-      // println "Processing ${args[0]}"
+      log.info "Processing ${args[0]}"
       new SpotToZara( args[0] ).run()
     }
   }
@@ -38,7 +39,7 @@ class SpotToZara {
   void saveAsZaraPlayList() {
     File lst = new File( zaraFileName )
     if ( !lst.exists() ) {
-      println "Creating ZaraRadio playlist: $zaraFileName"
+      log.info "Creating ZaraRadio playlist: $zaraFileName"
       lst << "${m3u8.size()}\n"
       m3u8.each { trackNo, details ->
         details[0] = details[0] * 1000
@@ -46,7 +47,7 @@ class SpotToZara {
         lst << '\r\n'
       }
     } else {
-      println "ABORTING as Zara playlist already exists"
+      log.fatal "ABORTING as Zara playlist already exists"
     }
   }
 
@@ -77,7 +78,6 @@ class SpotToZara {
   void loadM3u8() {
     int lineNo = 0
     long trackLength
-    // String fileName = /C:\portable\SpotDL\Love songs 3.m3u8/
     File file = new File( m3u8FileName )
     assert file.exists()
     println "Loading $m3u8FileName"
