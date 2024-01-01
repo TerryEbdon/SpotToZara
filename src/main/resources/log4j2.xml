@@ -28,7 +28,8 @@ limitations under the License.
     <Console name="consoleLog" target="SYSTEM_OUT">
       <PatternLayout pattern="${consolePattern}"/>
     </Console>
-    <RollingFile name="traceLog" fileName="${logPath}/SpotToZara-trace.log" filePattern="${logPath}/${filePattern}">
+    <RollingFile name="traceLog" fileName="${logPath}/SpotToZara-trace.log"
+      filePattern="${logPath}/${filePattern}">
       <PatternLayout>
         <pattern>${SpotToZaraPattern}</pattern>
       </PatternLayout>
@@ -36,7 +37,8 @@ limitations under the License.
         <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
       </Policies>
     </RollingFile>
-    <RollingFile name="errorLog" fileName="${logPath}/SpotToZara-error.log" filePattern="${logPath}/SpotToZara-error-%d{yyyy-MM-dd}.log">
+    <RollingFile name="errorLog" fileName="${logPath}/SpotToZara-error.log"
+                 filePattern="${logPath}/SpotToZara-error-%d{yyyy-MM-dd}.log">
       <PatternLayout>
         <pattern>${SpotToZaraPattern}</pattern>
       </PatternLayout>
@@ -46,9 +48,9 @@ limitations under the License.
     </RollingFile>
   </Appenders>
   <Loggers>
-    <Logger name="net.ebdon.SpotToZara" level="${logLevel}" additivity="false">
-      <appender-ref ref="traceLog" level="${logLevel}"/>
-      <appender-ref ref="errorLog" level="error"/>
+    <Logger name="net.ebdon.spottozara" level="${logLevel}" additivity="false">
+      <appender-ref ref="traceLog"   level="${logLevel}"/>
+      <appender-ref ref="errorLog"   level="error"/>
       <appender-ref ref="consoleLog" level="error"/>
     </Logger>
     <Root level="error" additivity="false">
