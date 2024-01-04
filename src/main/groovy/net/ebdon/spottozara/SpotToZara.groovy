@@ -78,7 +78,7 @@ class SpotToZara {
 
   void loadM3u8() {
     int lineNo = 0
-    long trackLength
+    long trackLength = -99
     File file = new File( m3u8FileName )
     assert file.exists()
     println "Loading $m3u8FileName"
@@ -92,16 +92,17 @@ class SpotToZara {
           break
         }
         case '#EXTINF': {    // length, artist - name
-          ++trackNo
           log.trace "EXTINF  line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
-          assert lineNo > 1 && lineNo % 2 == 0
+          // assert lineNo > 1 && lineNo % 2 == 0
           trackLength = Long.parseLong( line.split(/(EXTINF:)|(,)/)[1] )
           break
         }
         default: { // file name
+          ++trackNo
           log.trace "default line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
-          assert lineNo > 1 && lineNo % 2 == 1
+          // assert lineNo > 1 && lineNo % 2 == 1
           m3u8[trackNo] = [trackLength, line]
+          trackLength = -99
         }
       }
     }
