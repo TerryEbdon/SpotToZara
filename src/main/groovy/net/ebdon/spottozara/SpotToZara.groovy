@@ -93,15 +93,14 @@ class SpotToZara {
         }
         case '#EXTINF': {    // length, artist - name
           log.trace "EXTINF  line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
-          // assert lineNo > 1 && lineNo % 2 == 0
           trackLength = Long.parseLong( line.split(/(EXTINF:)|(,)/)[1] )
           break
         }
         default: { // file name
           ++trackNo
           log.trace "default line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
-          // assert lineNo > 1 && lineNo % 2 == 1
-          m3u8[trackNo] = [trackLength, line]
+          final String trackPath = new File( line ).absolutePath
+          m3u8[trackNo] = [trackLength,trackPath]
           trackLength = -99
         }
       }
