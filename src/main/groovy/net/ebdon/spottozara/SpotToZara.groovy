@@ -9,9 +9,11 @@ import java.util.logging.Level
 @groovy.util.logging.Log4j2
 class SpotToZara {
   public static Logger audioTagLogger = Logger.getLogger('org.jaudiotagger')
-  final String m3uFileType  = '.m3u8'
-  final String zaraFileType = '.lst'
+  final String m3u8FileType  = '.m3u8'
+  final String m3uFileType   = '.m3u'
+  final String zaraFileType  = '.lst'
   final String m3u8FileName
+  final String m3uFileName
   final String zaraFileName
   def m3u8 = [:]
 
@@ -25,15 +27,31 @@ class SpotToZara {
   }
 
   SpotToZara( spotFileName ) {
-    Boolean includesFileType = spotFileName.contains( m3uFileType ) 
-    m3u8FileName = includesFileType ? spotFileName : spotFileName + m3uFileType
-    zaraFileName = m3u8FileName - m3uFileType + zaraFileType
+    Boolean includesFileType = spotFileName.contains( m3u8FileType ) 
+    m3u8FileName = includesFileType ? spotFileName : spotFileName + m3u8FileType
+    m3uFileName  = m3u8FileName - m3u8FileType + m3uFileType
+    zaraFileName = m3u8FileName - m3u8FileType + zaraFileType
   }
 
   void run() {
     loadM3u8()
     fixMetadata()
     saveAsZaraPlayList()
+    saveAsM3uPlayList()
+  }
+
+  void saveAsM3uPlayList() {
+    File m3u = new File( m3uFileName )
+    if ( !m3u.exists() ) {
+      log.info "Creating M3U playlist: $m3uFileName"
+      m3u8.each { trackNo, details ->
+        m3u << details[1]
+        m3u << '\r\n'
+      }
+      println "Created: $m3uFileName"
+    } else {
+      log.error "M3U playlist already exists"
+    }
   }
 
   void saveAsZaraPlayList() {
@@ -46,6 +64,7 @@ class SpotToZara {
         lst << details.join('\t')
         lst << '\r\n'
       }
+      println "Created: $zaraFileName"
     } else {
       log.fatal "ABORTING as Zara playlist already exists"
     }
@@ -81,7 +100,7 @@ class SpotToZara {
     long trackLength = -99
     File file = new File( m3u8FileName )
     assert file.exists()
-    println "Loading $m3u8FileName"
+    println "Loading: $m3u8FileName"
     int trackNo
     file.eachLine { line ->
       ++lineNo
