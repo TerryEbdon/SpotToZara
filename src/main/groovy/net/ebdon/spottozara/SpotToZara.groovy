@@ -5,7 +5,6 @@ import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import java.util.logging.Logger
 import java.util.logging.Level
-import org.codehaus.groovy.runtime.powerassert.PowerAssertionError
 
 @groovy.util.logging.Log4j2
 class SpotToZara {
@@ -17,6 +16,7 @@ class SpotToZara {
   final String m3uFileName
   final String zaraFileName
   def m3u8 = [:]
+  File playlist
 
   public static main( args ) {
     if ( args.size() != 1 ) {
@@ -46,32 +46,40 @@ class SpotToZara {
   }
 
   void saveAsM3uPlayList() {
-    File m3u = new File( m3uFileName )
-    if ( !m3u.exists() ) {
-      log.info "Creating M3U playlist: $m3uFileName"
-      m3u8.each { trackNo, details ->
-        m3u << details[1]
-        m3u << '\r\n'
+    if (m3u8.size() > 0 ) {
+      File m3u = new File( m3uFileName )
+      if ( !m3u.exists() ) {
+        log.info "Creating M3U playlist: $m3uFileName"
+        m3u8.each { trackNo, details ->
+          m3u << details[1]
+          m3u << '\r\n'
+        }
+        println "Created: $m3uFileName"
+      } else {
+        log.error "M3U playlist already exists"
       }
-      println "Created: $m3uFileName"
     } else {
-      log.error "M3U playlist already exists"
+      log.debug "m3u playlist not created as .m3u8 playlist is empty or missing"
     }
   }
 
   void saveAsZaraPlayList() {
-    File lst = new File( zaraFileName )
-    if ( !lst.exists() ) {
-      log.info "Creating ZaraRadio playlist: $zaraFileName"
-      lst << "${m3u8.size()}\n"
-      m3u8.each { trackNo, details ->
-        details[0] = details[0] * 1000
-        lst << details.join('\t')
-        lst << '\r\n'
+    if (m3u8.size() > 0 ) {
+      File lst = new File( zaraFileName )
+      if ( !lst.exists() ) {
+        log.info "Creating ZaraRadio playlist: $zaraFileName"
+        lst << "${m3u8.size()}\n"
+        m3u8.each { trackNo, details ->
+          details[0] = details[0] * 1000
+          lst << details.join('\t')
+          lst << '\r\n'
+        }
+        println "Created: $zaraFileName"
+      } else {
+        log.fatal "ABORTING as Zara playlist already exists"
       }
-      println "Created: $zaraFileName"
     } else {
-      log.fatal "ABORTING as Zara playlist already exists"
+      log.debug "Zara playlist not created as .m3u8 playlist is empty or missing"
     }
   }
 
@@ -96,18 +104,30 @@ class SpotToZara {
         ++fixedCount
       }
     }
-    log.info "Fixed $fixedCount track lengths."
-    println "Fixed $fixedCount track lengths."
+    if (m3u8.size() > 0) {
+      log.info "Fixed $fixedCount track lengths."
+      println "Fixed $fixedCount track lengths."
+    } else {
+      log.info "No tracks downloaded"
+      println  "No tracks downloaded"
+    }
   }
 
   void loadM3u8() {
-    int lineNo = 0
-    long trackLength = -99
-    File file = new File( m3u8FileName )
-    assert file.exists()
+    playlist = new File( m3u8FileName )
+    if ( playlist.exists() ) {
+      processM3u8()
+    } else {
+      log.error "No such file: ${m3u8FileName}"
+    }
+  }
+
+  void processM3u8() {
     println "Loading: $m3u8FileName"
+    long trackLength = -99
+    int lineNo = 0
     int trackNo
-    file.eachLine { line ->
+    playlist.eachLine { line ->
       ++lineNo
       def bits = line.split(':')
       switch ( bits[0] ) {
