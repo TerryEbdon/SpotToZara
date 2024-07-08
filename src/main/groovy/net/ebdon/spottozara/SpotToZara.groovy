@@ -5,6 +5,7 @@ import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import java.util.logging.Logger
 import java.util.logging.Level
+import org.codehaus.groovy.runtime.powerassert.PowerAssertionError
 
 @groovy.util.logging.Log4j2
 class SpotToZara {
@@ -22,7 +23,11 @@ class SpotToZara {
       println "Usage: SpotToZara {spotfile}"
     } else {
       log.info "Processing ${args[0]}"
-      new SpotToZara( args[0] ).run()
+      try {
+        new SpotToZara( args[0] ).run()
+      } catch ( Throwable thrown ) {
+       log.fatal thrown
+      }
     }
   }
 
