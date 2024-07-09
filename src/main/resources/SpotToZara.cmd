@@ -12,9 +12,9 @@ if ERRORLEVEL 1 (
     echo ERROR: Can't find ffmpeg
   ) else (
     set/p url=Spotify playlist URL: 
-    if not !url!=="" (
+    if "!url!" neq "" (
       set/p plName=Playlist name: 
-      if not !plName!=="" (
+      if "!plName!" neq "" (
         if not exist "!plName!.lst" (
           echo Just a moment...
           !spotDL! --m3u "!plName!" "!url!"
