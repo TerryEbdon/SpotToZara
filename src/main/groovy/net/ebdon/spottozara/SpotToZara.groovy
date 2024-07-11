@@ -5,6 +5,7 @@ import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import java.util.logging.Logger
 import java.util.logging.Level
+import org.apache.commons.cli.*
 
 @groovy.util.logging.Log4j2
 class SpotToZara {
@@ -19,16 +20,53 @@ class SpotToZara {
   File playlist
 
   public static main( args ) {
-    if ( args.size() != 1 ) {
-      println "Usage: SpotToZara {spotfile}"
+    Options options = new Options();
+    options.addOption("h", false, "display help");
+    // options.addOption("u", true, "spotify url");
+    // options.addOption("i", true, "install dependency");
+
+    final String installFfmpeg = 'install-ffmpeg'
+
+    Option urlOption = Option.builder("url")
+                            .argName("url")
+                            .hasArg()
+                            .desc("the spotify URL")
+                            .build();
+    Option ffmpegOption = Option.builder(installFfmpeg)
+                            .desc()
+
+    options.addOption(urlOption)
+    options.addOption(ffmpegOption)
+    options.addOption(spotDl)
+
+    CommandLineParser parser = new DefaultParser();
+    CommandLine cmd
+    try {
+      cmd = parser.parse(options, args);
+    } catch (org.apache.commons.cli.MissingArgumentException mae) {
+      log.error mae.message
+      return
+    }
+    if(cmd.hasOption("h")) {
+      HelpFormatter formatter = new HelpFormatter()
+      formatter.printHelp("SpotToZara", options)
     } else {
-      log.info "Processing ${args[0]}"
-      try {
-        new SpotToZara( args[0] ).run()
-      } catch ( Throwable thrown ) {
-       log.fatal thrown
+      if (cmd.hasOption("url")) {
+        String url = cmd.getOptionValue("url")
+        println "Processing $url"
+        log.info "Processing $url"
+        // try {
+          new SpotToZara( url ).run()
+      //   } catch ( Throwable thrown ) {
+      //     log.fatal thrown
+      //   }
+      } else {
+        if ( cmd.hasOption("install-ffmpeg")) {
+          log.error "Option 'i' is not yet supported"
+        }
       }
     }
+    return
   }
 
   SpotToZara( spotFileName ) {
