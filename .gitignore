@@ -10,3 +10,5 @@ spotdl-4.2.5-win32.exe
 *.m3u
 *.m3u8
 *.mp3
+*.7z
+test.txt

@@ -19,15 +19,28 @@ class SpotToZara {
   File playlist
 
   public static main( args ) {
-    if ( args.size() != 1 ) {
-      println "Usage: SpotToZara {spotfile}"
-    } else {
-      log.info "Processing ${args[0]}"
-      try {
-        new SpotToZara( args[0] ).run()
-      } catch ( Throwable thrown ) {
-       log.fatal thrown
+    final String path = args.last()
+    if (args.size() in 1..2) {
+      switch (args.first()) {
+        case 'install-ffmpeg': {
+          Installer.installFfmpeg(path)
+          break
+        }
+
+        default: {
+          final String url = args.first()
+          println   "downloading playlist $url"
+          log.info  "downloading playlist $url"
+
+          try {
+            new SpotToZara( url ).run()
+          } catch ( Throwable thrown ) {
+            log.fatal thrown
+          }
+        }
       }
+    } else {
+      log.error "Expecting 1 or 2 arguments but received ${args.size()}"
     }
   }
 
