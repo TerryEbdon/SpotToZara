@@ -5,7 +5,7 @@ import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import java.util.logging.Logger
 import java.util.logging.Level
-import org.apache.commons.cli.*
+import groovy.ant.AntBuilder
 
 @groovy.util.logging.Log4j2
 class SpotToZara {
@@ -20,53 +20,29 @@ class SpotToZara {
   File playlist
 
   public static main( args ) {
-    Options options = new Options();
-    options.addOption("h", false, "display help");
-    // options.addOption("u", true, "spotify url");
-    // options.addOption("i", true, "install dependency");
+    final String path = args.last()
+    if (args.size() in 1..2) {
+      switch (args.first()) {
+        case 'install-ffmpeg': {
+          Installer.installFfmpeg(path)
+          break
+        }
 
-    final String installFfmpeg = 'install-ffmpeg'
+        default: {
+          final String url = args.first()
+          println   "downloading playlist $url"
+          log.info  "downloading playlist $url"
 
-    Option urlOption = Option.builder("url")
-                            .argName("url")
-                            .hasArg()
-                            .desc("the spotify URL")
-                            .build();
-    Option ffmpegOption = Option.builder(installFfmpeg)
-                            .desc()
-
-    options.addOption(urlOption)
-    options.addOption(ffmpegOption)
-    options.addOption(spotDl)
-
-    CommandLineParser parser = new DefaultParser();
-    CommandLine cmd
-    try {
-      cmd = parser.parse(options, args);
-    } catch (org.apache.commons.cli.MissingArgumentException mae) {
-      log.error mae.message
-      return
-    }
-    if(cmd.hasOption("h")) {
-      HelpFormatter formatter = new HelpFormatter()
-      formatter.printHelp("SpotToZara", options)
-    } else {
-      if (cmd.hasOption("url")) {
-        String url = cmd.getOptionValue("url")
-        println "Processing $url"
-        log.info "Processing $url"
-        // try {
-          new SpotToZara( url ).run()
-      //   } catch ( Throwable thrown ) {
-      //     log.fatal thrown
-      //   }
-      } else {
-        if ( cmd.hasOption("install-ffmpeg")) {
-          log.error "Option 'i' is not yet supported"
+          try {
+            new SpotToZara( url ).run()
+          } catch ( Throwable thrown ) {
+            log.fatal thrown
+          }
         }
       }
+    } else {
+      log.error "Expecting 1 or 2 arguments but received ${args.size()}"
     }
-    return
   }
 
   SpotToZara( spotFileName ) {
