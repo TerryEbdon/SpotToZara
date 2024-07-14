@@ -34,8 +34,7 @@ class SpotToZara {
 
         default: {
           final String url = args.first()
-          println   "downloading playlist $url"
-          log.info  "downloading playlist $url"
+          log.info  "Downloading playlist $url"
 
           try {
             new SpotToZara( url ).run()
@@ -72,7 +71,7 @@ class SpotToZara {
           m3u << details[1]
           m3u << '\r\n'
         }
-        println "Created: $m3uFileName"
+        log.info "Created: $m3uFileName"
       } else {
         log.error "M3U playlist already exists"
       }
@@ -92,7 +91,7 @@ class SpotToZara {
           lst << details.join('\t')
           lst << '\r\n'
         }
-        println "Created: $zaraFileName"
+        log.info "Created: $zaraFileName"
       } else {
         log.fatal "ABORTING as Zara playlist already exists"
       }
@@ -124,10 +123,8 @@ class SpotToZara {
     }
     if (m3u8.size() > 0) {
       log.info "Fixed $fixedCount track lengths."
-      println "Fixed $fixedCount track lengths."
     } else {
       log.info "No tracks downloaded"
-      println  "No tracks downloaded"
     }
   }
 
@@ -136,12 +133,12 @@ class SpotToZara {
     if ( playlist.exists() ) {
       processM3u8()
     } else {
-      log.error "No such file: ${m3u8FileName}"
+      log.error "No such file ${m3u8FileName}"
     }
   }
 
   void processM3u8() {
-    println "Loading: $m3u8FileName"
+    log.info "Loading: $m3u8FileName"
     long trackLength = -99
     int lineNo = 0
     int trackNo

@@ -24,13 +24,11 @@ class Installer {
   static final AntBuilder ant = new AntBuilder()
 
   static void installSpotDL(final String installPath) {
-    println 'Installing spotDl'
-    println "from: $spotDlUrl"
-    println "into: $installPath"
-    log.info "Installing spotDl from: $spotDlUrl"
-    log.info "Installing spotDl into: $installPath"
-    println "Exists before: ${new File(spotDlFile).exists()}"
-    println "Path exists: ${new File(installPath).exists()}"
+    log.info  "Installing spotDl from: $spotDlUrl"
+    log.info  "Installing spotDl into: $installPath"
+    log.trace "Exists before: ${new File(spotDlFile).exists()}"
+    log.trace "Path exists: ${new File(installPath).exists()}"
+
     assert new File(installPath).exists()
 
     ant.get (
@@ -55,14 +53,11 @@ class Installer {
   }
 
   static void installFfmpeg(final String installPath) {
+    log.info  "Installing ffmpeg from: $ffmpegUrl"
+    log.info  "Installing ffmpeg into: $installPath"
+    log.trace "Exists before: ${new File(ffmpegFile).exists()}"
+    log.trace "Path exists: ${new File(installPath).exists()}"
 
-    println 'Installing ffmpeg'
-    println "from: $ffmpegUrl"
-    println "into: $installPath"
-    log.info "Installing ffmpeg from: $ffmpegUrl"
-    log.info "Installing ffmpeg into: $installPath"
-    println "Exists before: ${new File(ffmpegFile).exists()}"
-    println "Path exists: ${new File(installPath).exists()}"
     assert new File(installPath).exists()
 
     ant.get (
@@ -70,6 +65,7 @@ class Installer {
       dest:         downloadDir,
       verbose:      false,
       usetimestamp: true
+
     )
     if (new File(ffmpegFile).exists()) {
       log.info "ffmpeg downloaded"
