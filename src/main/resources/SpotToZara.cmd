@@ -1,48 +1,56 @@
 @echo off
 setlocal ENABLEDELAYEDEXPANSION
-set spotDL="spotdl-4.2.5-win32"
-where/q !spotDL!
-if ERRORLEVEL 1 (
+set spotDL="spotdl-4.2.5-win32.exe"
+
+if not exist "%~dp0bin"\!spotDL! (
   echo.
-  echo ERROR: Can't find !spotDL!
-) else (
-  if not exist "%~dp0bin"\ffmpeg.exe (
-    echo.
-    echo Installing ffmpeg
-    call "%~dp0bin\SpotToZara.bat" install-ffmpeg "%~dp0bin"
-  )
-  if not exist "%~dp0bin"\ffmpeg.exe (
-    echo ERROR: ffmpeg install failed
-    goto :EOF
-  )
-  set/p url=Spotify playlist URL: 
-  if "!url!" neq "" (
-    set/p plName=Playlist name: 
-    if "!plName!" neq "" (
-      if not exist "!plName!.lst" (
-        echo Just a moment...
+  echo Installing !spotDL!
+  call "%~dp0bin\SpotToZara.bat" install-spotdl "%~dp0bin"
+)
 
-        !spotDL! --m3u "!plName!" "!url!"
-        echo.
-        set/p worked=Did the download succeed for all files [y/n]? 
+if not exist "%~dp0bin"\!spotDL! (
+  echo ERROR: spotDl install failed
+  goto :EOF
+)
 
-        if /I "!worked!" equ "y" (
-          echo Converting for ZaraRadio
-          call "%~dp0bin\SpotToZara.bat" "!plName!"
-        ) else (
-          echo.
-          echo Run the command again. It should continue from where it left off.
-          echo If it still fails then contact support or log an issue at:
-          echo https://github.com/TerryEbdon/SpotToZara/issues
-          echo.
-        )
+if not exist "%~dp0bin"\ffmpeg.exe (
+  echo.
+  echo Installing ffmpeg
+  call "%~dp0bin\SpotToZara.bat" install-ffmpeg "%~dp0bin"
+)
+
+if not exist "%~dp0bin"\ffmpeg.exe (
+  echo ERROR: ffmpeg install failed
+  goto :EOF
+)
+set/p url=Spotify playlist URL: 
+if "!url!" neq "" (
+  set/p plName=Playlist name: 
+  if "!plName!" neq "" (
+    if not exist "!plName!.lst" (
+      echo Just a moment...
+
+      "%~dp0bin\"!spotDL! --m3u "!plName!" "!url!"
+      echo.
+      set/p worked=Did the download succeed for all files [y/n]? 
+
+      if /I "!worked!" equ "y" (
+        echo Converting for ZaraRadio
+        call "%~dp0bin\SpotToZara.bat" "!plName!"
       ) else (
-        echo A ZaraRadio playlist with that name already exists.
+        echo.
+        echo Run the command again. It should continue from where it left off.
+        echo If it still fails then contact support or log an issue at:
+        echo https://github.com/TerryEbdon/SpotToZara/issues
+        echo.
       )
     ) else (
-      echo A playlist name must be provided.
+      echo A ZaraRadio playlist with that name already exists.
     )
   ) else (
-    echo A Spotify playlist URL is required.
+    echo A playlist name must be provided.
   )
+) else (
+  echo A Spotify playlist URL is required.
 )
+
