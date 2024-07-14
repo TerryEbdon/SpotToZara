@@ -27,6 +27,11 @@ class SpotToZara {
           break
         }
 
+        case 'install-spotdl': {
+          Installer.installSpotDL(path)
+          break
+        }
+
         default: {
           final String url = args.first()
           println   "downloading playlist $url"
