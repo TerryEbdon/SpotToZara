@@ -6,16 +6,22 @@ import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import java.util.logging.Logger
 import java.util.logging.Level
 
+/**
+ * Command Line Interface and playlist processing
+ */
+@SuppressWarnings('CatchException')
 @groovy.util.logging.Log4j2
 class SpotToZara {
-  public static Logger audioTagLogger = Logger.getLogger('org.jaudiotagger')
+  private static final Logger audioTagLogger = Logger.getLogger('org.jaudiotagger')
   final String m3u8FileType  = '.m3u8'
   final String m3uFileType   = '.m3u'
   final String zaraFileType  = '.lst'
+  final long   unknownTrackLength = -99
   final String m3u8FileName
   final String m3uFileName
   final String zaraFileName
-  def m3u8 = [:]
+
+  Map m3u8 = [:]
   File playlist
 
   public static main( args ) {
@@ -38,8 +44,8 @@ class SpotToZara {
 
           try {
             new SpotToZara( url ).run()
-          } catch ( Throwable thrown ) {
-            log.fatal thrown
+          } catch ( Exception ex ) {
+            log.fatal ex
           }
         }
       }
@@ -69,7 +75,7 @@ class SpotToZara {
         log.info "Creating M3U playlist: $m3uFileName"
         m3u8.each { trackNo, details ->
           m3u << details[1]
-          m3u << '\r\n'
+          m3u << System.lineSeparator()
         }
         log.info "Created: $m3uFileName"
       } else {
@@ -85,11 +91,13 @@ class SpotToZara {
       File lst = new File( zaraFileName )
       if ( !lst.exists() ) {
         log.info "Creating ZaraRadio playlist: $zaraFileName"
-        lst << "${m3u8.size()}\n"
+        lst << "${m3u8.size()}"
+        lst << System.lineSeparator()
+
         m3u8.each { trackNo, details ->
           details[0] = details[0] * 1000
           lst << details.join('\t')
-          lst << '\r\n'
+          lst << System.lineSeparator()
         }
         log.info "Created: $zaraFileName"
       } else {
@@ -114,8 +122,9 @@ class SpotToZara {
         MP3AudioHeader audioHeader = audioFile.getAudioHeader();
         String newLengthStr = audioHeader.getTrackLength();
         Long newlength = Long.parseLong( newLengthStr )
-        Long mins = newlength / 60
-        Long secs = newlength % 60 
+        final long secsPerMin = 60
+        Long mins = newlength / secsPerMin
+        Long secs = newlength % secsPerMin 
         log.debug "New length: $newLengthStr = $mins mins, $secs secs"
         details[0]= newlength
         ++fixedCount
@@ -139,7 +148,7 @@ class SpotToZara {
 
   void processM3u8() {
     log.info "Loading: $m3u8FileName"
-    long trackLength = -99
+    long trackLength = unknownTrackLength
     int lineNo = 0
     int trackNo
     playlist.eachLine { line ->
@@ -160,7 +169,7 @@ class SpotToZara {
           log.trace "default line: $lineNo, trackNo: $trackNo, ${line[0..10]}"
           final String trackPath = new File( line ).absolutePath
           m3u8[trackNo] = [trackLength,trackPath]
-          trackLength = -99
+          trackLength = unknownTrackLength
         }
       }
     }
