@@ -2,8 +2,14 @@ package net.ebdon.spottozara
 
 import groovy.ant.AntBuilder
 
+/**
+ * Bootstrap class that downloads dependencies.
+ */
 @groovy.util.logging.Log4j2
 class Installer {
+  static final String ffmpegDownloadFail = 'ffmpeg download failed.'
+  static final String spotDlDownloadFail = 'spotDl download failed.'
+
   static final String downloadDir   = System.getProperty('java.io.tmpdir')
   static final String github        = 'https://github.com'
 
@@ -47,8 +53,8 @@ class Installer {
       )
       log.info 'spotDl installed'
     } else {
-      log.error 'spotDl download failed.'
-      ant.fail  'spotDl download failed.'
+      log.error spotDlDownloadFail
+      ant.fail  spotDlDownloadFail
     }
   }
 
@@ -80,8 +86,8 @@ class Installer {
       }
       log.info 'ffmpeg unzipped'
     } else {
-      log.error 'ffmpeg download failed.'
-      ant.fail  'ffmpeg download failed.'
+      log.error ffmpegDownloadFail
+      ant.fail  ffmpegDownloadFail
     }
   }
 }
