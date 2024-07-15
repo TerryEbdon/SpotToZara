@@ -26,15 +26,16 @@ class SpotToZara {
 
   static void main( String[] args ) {
     final String path = args.last()
+    Installer installer = new Installer(path)
     if (args.size() in 1..2) {
       switch (args.first()) {
         case 'install-ffmpeg': {
-          Installer.installFfmpeg(path)
+          installer.installFfmpeg()
           break
         }
 
         case 'install-spotdl': {
-          Installer.installSpotDL(path)
+          installer.installSpotDL()
           break
         }
 

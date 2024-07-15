@@ -1,6 +1,7 @@
 package net.ebdon.spottozara
 
 import groovy.ant.AntBuilder
+import org.apache.tools.ant.Project
 
 /**
  * Bootstrap class that downloads dependencies.
@@ -17,7 +18,7 @@ class Installer {
   static final String ffmpegZip     = 'ffmpeg-master-latest-win64-lgpl.zip'
   static final String ffmpegLastest = 'releases/download/latest'
   static final String ffmpegUrl     = "$ffmpegRepo/$ffmpegLastest/$ffmpegZip"
-  static final String ffmpegFile    = "$downloadDir/$ffmpegZip"
+  static final String ffmpegFile    = "$downloadDir$ffmpegZip"
 
   static final String spotDlRepo    = "$github/spotDL/spotify-downloader"
   static final String spotDlversion = '4.2.5'
@@ -28,9 +29,15 @@ class Installer {
 
   static final AntBuilder ant = new AntBuilder()
 
-  static void installSpotDL(final String installPath) {
-    log.info  "Installing spotDl from: $spotDlUrl"
-    log.info  "Installing spotDl into: $installPath"
+  final String installPath
+
+  Installer(final String installPath) {
+    this.installPath = installPath
+    ant.project.buildListeners[0].messageOutputLevel = Project.MSG_WARN
+  }
+
+  void installSpotDL() {
+    log.info  "Downloading: $spotDlExe"
     log.trace "Exists before: ${new File(spotDlFile).exists()}"
     log.trace "Path exists: ${new File(installPath).exists()}"
 
@@ -44,36 +51,36 @@ class Installer {
     )
 
     if (new File(spotDlFile).exists()) {
-      log.info 'spotDl downloaded'
+      log.debug 'spotDl downloaded'
+      log.info "Copying into: $installPath"
       ant.copy(
          file:  spotDlFile,
          todir: installPath,
          flatten: true
       )
-      log.info 'spotDl installed'
+      log.debug 'spotDl copied'
     } else {
       log.error spotDlDownloadFail
       ant.fail  spotDlDownloadFail
     }
   }
 
-  static void installFfmpeg(final String installPath) {
-    log.info  "Installing ffmpeg from: $ffmpegUrl"
-    log.info  "Installing ffmpeg into: $installPath"
+  void installFfmpeg() {
     log.trace "Exists before: ${new File(ffmpegFile).exists()}"
     log.trace "Path exists: ${new File(installPath).exists()}"
 
     assert new File(installPath).exists()
 
+    log.info  "Downloading $ffmpegZip"
     ant.get (
       src:          ffmpegUrl,
       dest:         downloadDir,
       verbose:      false,
-      usetimestamp: true
-
+      usetimestamp: true,
     )
     if (new File(ffmpegFile).exists()) {
-      log.info 'ffmpeg downloaded'
+      log.debug 'ffmpeg downloaded'
+      log.info  "Unzipping into: $installPath"
       ant.unzip(
          src:  ffmpegFile,
          dest: installPath,
@@ -83,7 +90,7 @@ class Installer {
         }
         mapper type: 'flatten'
       }
-      log.info 'ffmpeg unzipped'
+      log.debug 'ffmpeg unzipped'
     } else {
       log.error ffmpegDownloadFail
       ant.fail  ffmpegDownloadFail
