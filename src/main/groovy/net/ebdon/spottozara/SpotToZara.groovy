@@ -24,7 +24,7 @@ class SpotToZara {
   Map m3u8 = [:]
   File playlist
 
-  public static main( args ) {
+  static void main( String[] args ) {
     final String path = args.last()
     if (args.size() in 1..2) {
       switch (args.first()) {
@@ -54,8 +54,8 @@ class SpotToZara {
     }
   }
 
-  SpotToZara( spotFileName ) {
-    Boolean includesFileType = spotFileName.contains( m3u8FileType ) 
+  SpotToZara( String spotFileName ) {
+    Boolean includesFileType = spotFileName.contains( m3u8FileType )
     m3u8FileName = includesFileType ? spotFileName : spotFileName + m3u8FileType
     m3uFileName  = m3u8FileName - m3u8FileType + m3uFileType
     zaraFileName = m3u8FileName - m3u8FileType + zaraFileType
@@ -71,7 +71,7 @@ class SpotToZara {
   void saveAsM3uPlayList() {
     if (m3u8.size() > 0 ) {
       File m3u = new File( m3uFileName )
-      if ( !m3u.exists() ) {
+      if (m3u.exists() == false) {
         log.info "Creating M3U playlist: $m3uFileName"
         m3u8.each { trackNo, details ->
           m3u << details[1]
@@ -79,17 +79,17 @@ class SpotToZara {
         }
         log.info "Created: $m3uFileName"
       } else {
-        log.error "M3U playlist already exists"
+        log.error 'M3U playlist already exists'
       }
     } else {
-      log.debug "m3u playlist not created as .m3u8 playlist is empty or missing"
+      log.debug 'm3u playlist not created as .m3u8 playlist is empty or missing'
     }
   }
 
   void saveAsZaraPlayList() {
     if (m3u8.size() > 0 ) {
       File lst = new File( zaraFileName )
-      if ( !lst.exists() ) {
+      if (lst.exists() == false) {
         log.info "Creating ZaraRadio playlist: $zaraFileName"
         lst << "${m3u8.size()}"
         lst << System.lineSeparator()
@@ -101,32 +101,32 @@ class SpotToZara {
         }
         log.info "Created: $zaraFileName"
       } else {
-        log.fatal "ABORTING as Zara playlist already exists"
+        log.fatal 'ABORTING as Zara playlist already exists'
       }
     } else {
-      log.debug "Zara playlist not created as .m3u8 playlist is empty or missing"
+      log.debug 'Zara playlist not created as .m3u8 playlist is empty or missing'
     }
   }
 
   void fixMetadata() {
-    audioTagLogger.setLevel(Level.WARNING)
+    audioTagLogger.level = Level.WARNING
     int fixedCount = 0
     m3u8.each { trackNo, details ->
       if ( details.first() < 1 ) {
         log.debug "Fixing track $trackNo with length ${details[0]}"
         String trackFileName = details[1]
         log.debug trackFileName
-        File trackFile = new File( trackFileName ) 
+        File trackFile = new File( trackFileName )
         AudioFile audioFile = AudioFileIO.read( trackFile )
 
-        MP3AudioHeader audioHeader = audioFile.getAudioHeader();
-        String newLengthStr = audioHeader.getTrackLength();
+        MP3AudioHeader audioHeader = audioFile.audioHeader
+        String newLengthStr = audioHeader.trackLength
         Long newlength = Long.parseLong( newLengthStr )
         final long secsPerMin = 60
         Long mins = newlength / secsPerMin
-        Long secs = newlength % secsPerMin 
+        Long secs = newlength % secsPerMin
         log.debug "New length: $newLengthStr = $mins mins, $secs secs"
-        details[0]= newlength
+        details[0] = newlength
         ++fixedCount
       }
     }
@@ -153,7 +153,7 @@ class SpotToZara {
     int trackNo
     playlist.eachLine { line ->
       ++lineNo
-      def bits = line.split(':')
+      String[] bits = line.split(':')
       switch ( bits[0] ) {
         case '#EXTM3U': { // first line of file
           assert lineNo == 1
