@@ -19,7 +19,6 @@ class Installer {
   static final String ffmpegUrl     = "$ffmpegRepo/$ffmpegLastest/$ffmpegZip"
   static final String ffmpegFile    = "$downloadDir/$ffmpegZip"
 
-
   static final String spotDlRepo    = "$github/spotDL/spotify-downloader"
   static final String spotDlversion = '4.2.5'
   static final String spotDlExe     = "spotdl-${spotDlversion}-win32.exe"
@@ -45,7 +44,7 @@ class Installer {
     )
 
     if (new File(spotDlFile).exists()) {
-      log.info "spotDl downloaded"
+      log.info 'spotDl downloaded'
       ant.copy(
          file:  spotDlFile,
          todir: installPath,
@@ -74,10 +73,10 @@ class Installer {
 
     )
     if (new File(ffmpegFile).exists()) {
-      log.info "ffmpeg downloaded"
+      log.info 'ffmpeg downloaded'
       ant.unzip(
          src:  ffmpegFile,
-         dest: installPath
+         dest: installPath,
       ) {
         patternset {
           include name: '**/*.exe'
