@@ -34,7 +34,7 @@ class SpotToZara {
 
         default: {
           final String url = args.first()
-          log.info  "Downloading playlist $url"
+          log.info  "Processing Spotify playlist $url"
 
           try {
             new SpotToZara( url ).run()
@@ -124,7 +124,7 @@ class SpotToZara {
     if (m3u8.size() > 0) {
       log.info "Fixed $fixedCount track lengths."
     } else {
-      log.info "No tracks downloaded"
+      log.info 'Downloaded playlist is empty.'
     }
   }
 
