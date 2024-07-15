@@ -361,7 +361,7 @@ ruleset {
     // rulesets/security.xml
     FileCreateTempFile
     InsecureRandom
-    JavaIoPackageAccess
+    //JavaIoPackageAccess This app manipulates files by design.
     NonFinalPublicField
     NonFinalSubclassOfSensitiveInterface
     ObjectFinalize
