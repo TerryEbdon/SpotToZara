@@ -30,7 +30,7 @@ if "!url!" neq "" (
     if not exist "!plName!.lst" (
       echo Just a moment...
 
-      "%~dp0bin\"!spotDL! --m3u "!plName!" "!url!"
+      "%~dp0bin\"!spotDL! --ffmpeg "%~dp0bin\ffmpeg.exe" --m3u "!plName!" "!url!"
       echo.
       set/p worked=Did the download succeed for all files [y/n]? 
 
