@@ -5,7 +5,7 @@ import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.mp3.MP3AudioHeader
 import java.util.logging.Logger
 import java.util.logging.Level
-import net.ebdon.audio.Ffmpeg
+
 /**
  * Command Line Interface and playlist processing
  */
@@ -65,29 +65,8 @@ class SpotToZara {
   void run() {
     loadM3u8()
     fixMetadata()
-    trimSilence()
-    normalise()
     saveAsZaraPlayList()
     saveAsM3uPlayList()
-  }
-
-  void trimSilence() {
-    log.info 'Trimming silence from start and end of tracks'
-    new Ffmpeg().trimSilence( tracks )
-  }
-
-  void normalise() {
-    log.info "Normalising tracks"
-    new Ffmpeg().normalise( tracks )
-  }
-
-  final List getTracks() {
-    m3u8.collect {idx,track ->
-      log.trace ">>$idx<${track.last()[-10..-1]}"
-      String trackPath = track.last().replaceAll('\\\\','/')
-        // work around for internal regex errors
-      trackPath.split('/').last()
-    }
   }
 
   void saveAsM3uPlayList() {
