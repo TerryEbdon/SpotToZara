@@ -65,9 +65,15 @@ class SpotToZara {
   void run() {
     loadM3u8()
     fixMetadata()
+    trimSilence()
     normalise()
     saveAsZaraPlayList()
     saveAsM3uPlayList()
+  }
+
+  void trimSilence() {
+    log.info 'Trimming silence from start and end of tracks'
+    new Ffmpeg().trimSilence( tracks )
   }
 
   void normalise() {
