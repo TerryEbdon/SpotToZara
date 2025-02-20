@@ -3,26 +3,80 @@ package net.ebdon.audio
 import groovy.ant.AntBuilder
 import org.apache.tools.ant.Project
 import java.nio.file.Paths
+import org.codehaus.groovy.tools.groovydoc.ClasspathResourceManager
 
 /**
  * Use `ffmpeg` to process audio files.
  */
 @groovy.util.logging.Log4j2
 class Ffmpeg {
+  static final String configFileName = 'config.groovy'
+
   final String logLevel   = '-loglevel error'
   final String q          = '"'
   final String currentDir = '.'
 
   final AntBuilder ant    = new AntBuilder()
+  private Map config
+
+  final String srStartPeriods
+  final String srStartSilence
+  final String srStopSilence
+  final String srStopDuration
+  final Boolean srEnabled
 
   Ffmpeg() {
     ant.project.buildListeners[0].messageOutputLevel = Project.MSG_WARN
+    loadConfig()
+    srStartPeriods = config.silenceRemove.startPeriods
+    srStartSilence = config.silenceRemove.startSilence
+    srStopSilence  = config.silenceRemove.stoptSilence
+    srStopDuration = config.silenceRemove.stopDuration
+    srEnabled      = config.silenceRemove.enabled
+  
+    log.info "srStartPeriods: $srStartPeriods"
+    log.info "srStartSilence: $srStartSilence"
+    log.info "srStopSilence:  $srStopSilence"
+    log.info  "srStopDuration: $srStopDuration"
+  }
+
+  private void loadConfig() {
+    log.info "Loading config from $configFileName"
+    log.info 'Current folder is ' + new File('.').absolutePath
+    log.debug 'package:  ' + getClass().packageName
+    log.debug 'Class is: ' + getClass().name
+
+    final File configFile = new File( configFileName )
+
+    if ( configFile.exists() ) {
+      log.info "Using custom configuration from file:\n  ${configFile.absolutePath}"
+      println  "Using custom configuration from file:\n  ${configFile.absolutePath}"
+      config = new ConfigSlurper().parse( configFile.toURI().toURL())
+    } else {
+      log.info 'Using default configuration.'
+      println 'Using default configuration.'
+      ClasspathResourceManager resourceManager = new ClasspathResourceManager()
+      def configScript = resourceManager.getReader(configFileName)
+      if ( configScript ) {
+        final String scriptText = configScript.text
+        log.debug scriptText
+        config = new ConfigSlurper().parse( scriptText )
+        log.trace "config: ${config}"
+      } else {
+        ant.fail "Couldn't load resource for configuration script."
+      }
+    }
+   log.debug 'Resource loaded'
   }
 
   void trimSilence( List<String> trackList ) {
-    log.info 'Trimming silence from start and end of tracks.'
-    trackList.each { String trackFileName ->
-      trimAudio( trackFileName )
+    if ( srEnabled ) {
+      log.info 'Trimming silence from start and end of tracks.'
+      trackList.each { String trackFileName ->
+        trimAudio( trackFileName )
+      } 
+    } else {
+      log.info 'Silence trimming is disabled.'
     }
   }
 
@@ -99,7 +153,7 @@ class Ffmpeg {
 
   void trimAudio( final String mp3FileName ) {
     final String trimTrackArgs =
-      'areverse,atrim=start=0.2,silenceremove=start_periods=1:start_silence=0.1:start_threshold=0.02:stop_silence=0.5'
+      "areverse,atrim=start=0.2,silenceremove=start_periods=$srStartPeriods:start_silence=0.1:start_threshold=$srStartSilence:stop_silence=$srStopSilence:stop_duration=$srStopDuration"
     final String filter = "$q$trimTrackArgs,$trimTrackArgs$q"
 
     filterTrack('trimSilence', filter, mp3FileName)
