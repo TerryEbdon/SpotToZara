@@ -1,6 +1,6 @@
 @echo off
 setlocal ENABLEDELAYEDEXPANSION
-set spotDL="spotdl-4.2.11-win32.exe"
+set spotDL="spotdl-4.4.0-win32.exe"
 
 if not exist "%~dp0bin"\!spotDL! (
   echo.
