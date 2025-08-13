@@ -1,6 +1,7 @@
 @echo off
 setlocal ENABLEDELAYEDEXPANSION
 set spotDL="spotdl-4.4.0-win32.exe"
+set lyrics=--lyrics genius musixmatch
 
 if not exist "%~dp0bin"\!spotDL! (
   echo.
@@ -30,7 +31,7 @@ if "!url!" neq "" (
     if not exist "!plName!.lst" (
       echo Just a moment...
 
-      "%~dp0bin\"!spotDL! --ffmpeg "%~dp0bin\ffmpeg.exe" --m3u "!plName!" "!url!"
+      "%~dp0bin\"!spotDL! %lyrics% --ffmpeg "%~dp0bin\ffmpeg.exe" --m3u "!plName!" "!url!"
       echo.
       set/p worked=Did the download succeed for all files [y/n]? 
 
