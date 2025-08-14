@@ -28,6 +28,17 @@ repositories {
   mavenCentral()
 }
 
+jar {
+  manifest {
+    attributes 'Implementation-Title': project.name,
+      'Implementation-Version': 'v2.1.1',
+      'Built-By': System.getProperty('user.name'),
+      'Built-Date': new Date(),
+      'Built-JDK': System.getProperty('java.version'),
+      'Created-By': 'Gradle'
+    }
+}
+
 dependencies {
   implementation 'org.apache.groovy:groovy-all:4.0.28'
 
