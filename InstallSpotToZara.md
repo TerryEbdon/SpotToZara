@@ -1,6 +1,8 @@
 ## Install Java
 
-SpotToZara requires a recent version of Java, at least Java 11 but *not* Java 21. On Windows 10 / 11 you can install Java from the command prompt with the following command:
+SpotToZara requires a recent version of Java, at least Java 17 but *not* Java
+21. On Windows 10 / 11 you can install Java from the command prompt with the
+following command:
 
 ```
 winget install Microsoft.OpenJDK.17
