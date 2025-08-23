@@ -21,7 +21,7 @@ class Installer {
   static final String ffmpegFile    = "$downloadDir$ffmpegZip"
 
   static final String spotDlRepo    = "$github/spotDL/spotify-downloader"
-  static final String spotDlversion = '4.4.0'
+  static final String spotDlversion = '4.4.1'
   static final String spotDlExe     = "spotdl-${spotDlversion}-win32.exe"
   static final String spotDlLastest = "releases/download/v${spotDlversion}"
   static final String spotDlUrl     = "$spotDlRepo/$spotDlLastest/$spotDlExe"
