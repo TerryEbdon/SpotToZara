@@ -16,15 +16,15 @@ class Installer {
 
   static final String ffmpegRepo    = "$github/BtbN/FFmpeg-Builds"
   static final String ffmpegZip     = 'ffmpeg-master-latest-win64-lgpl.zip'
-  static final String ffmpegLastest = 'releases/download/latest'
-  static final String ffmpegUrl     = "$ffmpegRepo/$ffmpegLastest/$ffmpegZip"
+  static final String ffmpegLatest  = 'releases/download/latest'
+  static final String ffmpegUrl     = "$ffmpegRepo/$ffmpegLatest/$ffmpegZip"
   static final String ffmpegFile    = "$downloadDir$ffmpegZip"
 
   static final String spotDlRepo    = "$github/spotDL/spotify-downloader"
-  static final String spotDlversion = '4.4.1'
-  static final String spotDlExe     = "spotdl-${spotDlversion}-win32.exe"
-  static final String spotDlLastest = "releases/download/v${spotDlversion}"
-  static final String spotDlUrl     = "$spotDlRepo/$spotDlLastest/$spotDlExe"
+  static final String spotDlVersion = '4.4.1'
+  static final String spotDlExe     = "spotdl-${spotDlVersion}-win32.exe"
+  static final String spotDlLatest  = "releases/download/v${spotDlVersion}"
+  static final String spotDlUrl     = "$spotDlRepo/$spotDlLatest/$spotDlExe"
   static final String spotDlFile    = "$downloadDir/$spotDlExe"
 
   static final AntBuilder ant = new AntBuilder()
