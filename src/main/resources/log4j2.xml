@@ -48,11 +48,13 @@ limitations under the License.
     </RollingFile>
   </Appenders>
   <Loggers>
-    <Logger name="net.ebdon.spottozara" level="${logLevel}" additivity="false">
+    <Logger name="net.ebdon" level="${logLevel}" additivity="true">
       <appender-ref ref="traceLog"   level="${logLevel}"/>
       <appender-ref ref="errorLog"   level="error"/>
       <appender-ref ref="consoleLog" level="info"/>
     </Logger>
+		<Logger name="net.ebdon.audio"        level="${logLevel}" additivity="true">
+		<Logger name="net.ebdon.spottozara" level="${logLevel}" additivity="true">
     <Root level="error" additivity="false">
       <AppenderRef ref="consoleLog"/>
     </Root>
