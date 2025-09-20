@@ -81,19 +81,22 @@ class Installer {
     if (new File(ffmpegFile).exists()) {
       log.debug 'ffmpeg downloaded'
       log.info  "Unzipping into: $installPath"
-      ant.unzip(
-         src:  ffmpegFile,
-         dest: installPath,
-      ) {
-        patternset {
-          include name: '**/*.exe'
+      try {
+        ant.unzip(
+          src:  ffmpegFile,
+          dest: installPath,
+        ) {
+          patternset {
+            include name: '**/*.exe'
+          }
+          mapper type: 'flatten'
         }
-        mapper type: 'flatten'
+        log.debug 'ffmpeg unzipped'
+      } catch (org.apache.tools.ant.BuildException | java.io.IOException exc) {
+        log.error "Failed to unzip ffmpeg: ${exc.message}"
       }
-      log.debug 'ffmpeg unzipped'
     } else {
       log.error ffmpegDownloadFail
-      ant.fail  ffmpegDownloadFail
     }
   }
 }
