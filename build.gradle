@@ -35,7 +35,9 @@ java {
   }
 }
 
+def builtDate = new Date()
 project.version = 'v2.1.1'
+
 jar {
   manifest {
     attributes 'Implementation-Title': project.name,
@@ -72,4 +74,16 @@ application {
 
 test {
   useJUnitPlatform()
+}
+
+startScripts {
+  doLast {
+    def buildNum = String.format '%ty%<tm%<td%<tH%<tM', builtDate
+    windowsScript.setText(windowsScript.getText().
+      replace(
+        '@rem Execute SpotToZara', 
+        "@echo Using ${project.name} ${project.version} build $buildNum"
+      )
+    )
+  }
 }
