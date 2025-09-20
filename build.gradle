@@ -43,7 +43,7 @@ jar {
     attributes 'Implementation-Title': project.name,
       'Implementation-Version': project.version,
       'Built-By': System.getProperty('user.name'),
-      'Built-Date': new Date(),
+      'Built-Date': builtDate,
       'Built-JDK': System.getProperty('java.version'),
       'Created-By': 'Gradle'
     }
@@ -78,11 +78,11 @@ test {
 
 startScripts {
   doLast {
-    def buildNum = String.format '%ty%<tm%<td%<tH%<tM', builtDate
+    def buildTimestamp = String.format '%ty%<tm%<td%<tH%<tM', builtDate
     windowsScript.setText(windowsScript.getText().
       replace(
         '@rem Execute SpotToZara', 
-        "@echo Using ${project.name} ${project.version} build $buildNum"
+        "@echo Using ${project.name} ${project.version} build $buildTimestamp"
       )
     )
   }
