@@ -4,6 +4,7 @@
 @brief This file configures the app.
 */
 
+version = 'v3.0.0'
 aTrim {
   start = 0.2
 }

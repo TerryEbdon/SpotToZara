@@ -14,7 +14,7 @@ class Ffmpeg {
 
   final String logLevel   = '-loglevel error'
   final String q          = '"'
-  final String currentDir = '.'
+  final String currentDir = System.getProperty('user.dir')
 
   final AntBuilder ant    = new AntBuilder()
   private Map config
@@ -45,6 +45,7 @@ class Ffmpeg {
     srEnabled        = config.silenceRemove.enabled
     aTrimStart       = config.aTrim.start
 
+    log.debug "version         : ${config.version}"
     log.debug "aTrimStart      : $aTrimStart"
     log.debug "srStartPeriods  : $srStartPeriods"
     log.debug "srStartSilence  : $srStartSilence"
@@ -57,7 +58,7 @@ class Ffmpeg {
 
   private void loadConfig() {
     log.info "Loading config from $configFileName"
-    log.info 'Current folder is ' + System.getProperty('user.dir')
+    log.info 'Current folder is ' + currentDir
     log.debug 'package:  ' + getClass().packageName
     log.debug 'Class is: ' + getClass().name
 
@@ -80,6 +81,37 @@ class Ffmpeg {
       }
     }
    log.debug 'Resource loaded'
+  }
+
+  Boolean configMatchesApp() {
+    Boolean versionMatched =
+        major(appVersion) == major(config.version.toString())
+    log.info versionMatched ?
+      'Config is compatible with this app version' :
+      'Config is NOT compatible with this app version'
+
+    versionMatched
+  }
+
+  final String major( final String versionNumber ) {
+    final String unknownVersion = 'v-1'
+    final int minVersionSize = 'vX.Y.Z'.size()
+    if (versionNumber?.size() >= minVersionSize ) {
+      List<String> versionParts = versionNumber.split(/\./)
+      versionParts.size() ? versionParts.first() : unknownVersion
+    } else {
+      unknownVersion
+    }
+  }
+
+  private String getAppVersion() {
+    final Package myPackage  = this.class.package
+    final String title       = myPackage.implementationTitle
+    final String version     = myPackage.implementationVersion
+    final String format      = '%s %s'
+
+    log.debug String.format(format, title, version)
+    version
   }
 
   void trimSilence( List<String> trackList ) {

@@ -63,12 +63,14 @@ class SpotToZara {
   }
 
   void run() {
-    loadM3u8()
-    fixMetadata()
-    trimSilence()
-    normalise()
-    saveAsZaraPlayList()
-    saveAsM3uPlayList()
+    if (new Ffmpeg().configMatchesApp()) {
+      loadM3u8()
+      fixMetadata()
+      trimSilence()
+      normalise()
+      saveAsZaraPlayList()
+      saveAsM3uPlayList()
+    }
   }
 
   void trimSilence() {
