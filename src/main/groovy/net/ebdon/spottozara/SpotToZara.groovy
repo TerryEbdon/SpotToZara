@@ -77,13 +77,13 @@ class SpotToZara {
   }
 
   void normalise() {
-    log.info "Normalising tracks"
+    log.info 'Normalising tracks'
     new Ffmpeg().normalise( tracks )
   }
 
   final List getTracks() {
     final String trackPathSeparator = '/' // work around for internal regex errors
-    m3u8.collect {idx,track ->
+    m3u8.collect { idx,track ->
       log.trace ">>$idx<${track.last()[-10..-1]}"
       String trackPath = track.last().replaceAll('\\\\',trackPathSeparator)
       trackPath.split(trackPathSeparator).last()
