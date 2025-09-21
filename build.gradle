@@ -40,8 +40,8 @@ tasks.withType(AbstractArchiveTask).configureEach {
   reproducibleFileOrder  = true
 }
 
-tasks.withType(AbstractCopyTask) {
-  it.exclude '**/*.bak'
+tasks.withType(AbstractCopyTask).configureEach {
+  exclude '**/*.bak'
 }
 
 def builtDate = new Date()
@@ -86,12 +86,14 @@ test {
 }
 
 startScripts {
+  def projectName    = project.name
+  def projectVersion = project.version
   doLast {
     def buildTimestamp = String.format '%ty%<tm%<td%<tH%<tM', builtDate
     windowsScript.setText(windowsScript.getText().
       replace(
         '@rem Execute SpotToZara', 
-        "@echo Using ${project.name} ${project.version} build $buildTimestamp"
+        "@echo Using ${projectName} ${projectVersion} build $buildTimestamp"
       )
     )
   }
