@@ -82,11 +82,11 @@ class SpotToZara {
   }
 
   final List getTracks() {
+    final String trackPathSeparator = '/' // work around for internal regex errors
     m3u8.collect {idx,track ->
       log.trace ">>$idx<${track.last()[-10..-1]}"
-      String trackPath = track.last().replaceAll('\\\\','/')
-        // work around for internal regex errors
-      trackPath.split('/').last()
+      String trackPath = track.last().replaceAll('\\\\',trackPathSeparator)
+      trackPath.split(trackPathSeparator).last()
     }
   }
 
