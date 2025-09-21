@@ -52,7 +52,7 @@ class Ffmpeg {
 
   private void loadConfig() {
     log.info "Loading config from $configFileName"
-    log.info 'Current folder is ' + new File('.').absolutePath
+    log.info 'Current folder is ' + System.getProperty('user.dir')
     log.debug 'package:  ' + getClass().packageName
     log.debug 'Class is: ' + getClass().name
 
@@ -60,11 +60,9 @@ class Ffmpeg {
 
     if ( configFile.exists() ) {
       log.info "Using custom configuration from file:\n  ${configFile.absolutePath}"
-      println  "Using custom configuration from file:\n  ${configFile.absolutePath}"
       config = new ConfigSlurper().parse( configFile.toURI().toURL())
     } else {
       log.info 'Using default configuration.'
-      println 'Using default configuration.'
       ClasspathResourceManager resourceManager = new ClasspathResourceManager()
       def configScript = resourceManager.getReader(configFileName)
       if ( configScript ) {
