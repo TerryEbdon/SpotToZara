@@ -28,6 +28,11 @@ class Ffmpeg {
   final Boolean srEnabled
   final String aTrimStart
 
+  /**
+  * Initializes the Ffmpeg class, sets Ant logging level, loads configuration,
+  * and assigns config values to instance fields. All loaded values are logged.
+  */
+  @SuppressWarnings('UnnecessaryObjectReferences')
   Ffmpeg() {
     ant.project.buildListeners[0].messageOutputLevel = Project.MSG_WARN
     loadConfig()
@@ -39,7 +44,7 @@ class Ffmpeg {
     srStartDuration  = config.silenceRemove.startDuration
     srEnabled        = config.silenceRemove.enabled
     aTrimStart       = config.aTrim.start
-  
+
     log.debug "aTrimStart      : $aTrimStart"
     log.debug "srStartPeriods  : $srStartPeriods"
     log.debug "srStartSilence  : $srStartSilence"
@@ -64,7 +69,7 @@ class Ffmpeg {
     } else {
       log.info 'Using default configuration.'
       ClasspathResourceManager resourceManager = new ClasspathResourceManager()
-      def configScript = resourceManager.getReader(configFileName)
+      final Reader configScript = resourceManager.getReader(configFileName)
       if ( configScript ) {
         final String scriptText = configScript.text
         log.debug scriptText
@@ -82,7 +87,7 @@ class Ffmpeg {
       log.info 'Trimming silence from start and end of tracks.'
       trackList.each { String trackFileName ->
         trimAudio( trackFileName )
-      } 
+      }
     } else {
       log.info 'Silence trimming is disabled.'
     }
@@ -160,21 +165,21 @@ class Ffmpeg {
   }
 
   /**
-   * Trims silence from the start and end of the given audio file using ffmpeg's
-   * silenceremove filter.
-   *
-   * @param mp3FileName the name of the MP3 file to process
-   * Applies silence removal and reverses the audio to trim both edges.
-   */
+  * Trims silence from the start and end of the given audio file using ffmpeg's
+  * silenceremove filter.
+  *
+  * @param mp3FileName the name of the MP3 file to process
+  * Applies silence removal and reverses the audio to trim both edges.
+  */
   void trimAudio( final String mp3FileName ) {
     final String trimTrackEdgeArgs =
       "silenceremove=$srStartPeriods:" +
       "start_duration=$srStartDuration:" +
       "start_threshold=$srStartThreshold:" +
       "stop_silence=$srStopSilence:" +
-      "detection=peak," +
-      "aformat=dblp," +
-      "areverse"
+      'detection=peak,' +
+      'aformat=dblp,' +
+      'areverse'
 
     log.debug trimTrackEdgeArgs
     final String filter = "$q${trimTrackEdgeArgs},${trimTrackEdgeArgs}$q"
