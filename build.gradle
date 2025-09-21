@@ -35,6 +35,11 @@ java {
   }
 }
 
+tasks.withType(AbstractArchiveTask).configureEach {
+  preserveFileTimestamps = true
+  reproducibleFileOrder  = true
+}
+
 def builtDate = new Date()
 project.version = 'v2.1.1'
 
