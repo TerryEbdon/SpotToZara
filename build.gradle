@@ -35,6 +35,11 @@ java {
   }
 }
 
+tasks.withType(AbstractArchiveTask).configureEach {
+  preserveFileTimestamps = true
+  reproducibleFileOrder  = true
+}
+
 tasks.withType(AbstractCopyTask) {
   it.exclude '**/*.bak'
 }
