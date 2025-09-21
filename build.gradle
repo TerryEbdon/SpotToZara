@@ -40,6 +40,10 @@ tasks.withType(AbstractArchiveTask).configureEach {
   reproducibleFileOrder  = true
 }
 
+tasks.withType(AbstractCopyTask) {
+  it.exclude '**/*.bak'
+}
+
 def builtDate = new Date()
 project.version = 'v2.1.1'
 
