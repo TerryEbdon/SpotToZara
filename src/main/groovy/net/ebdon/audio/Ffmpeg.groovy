@@ -21,23 +21,33 @@ class Ffmpeg {
 
   final String srStartPeriods
   final String srStartSilence
+  final String srStartThreshold
   final String srStopSilence
   final String srStopDuration
+  final String srStartDuration
   final Boolean srEnabled
+  final String aTrimStart
 
   Ffmpeg() {
     ant.project.buildListeners[0].messageOutputLevel = Project.MSG_WARN
     loadConfig()
-    srStartPeriods = config.silenceRemove.startPeriods
-    srStartSilence = config.silenceRemove.startSilence
-    srStopSilence  = config.silenceRemove.stoptSilence
-    srStopDuration = config.silenceRemove.stopDuration
-    srEnabled      = config.silenceRemove.enabled
+    srStartPeriods   = config.silenceRemove.startPeriods
+    srStartSilence   = config.silenceRemove.startSilence
+    srStartThreshold = config.silenceRemove.startThreshold
+    srStopSilence    = config.silenceRemove.stopSilence
+    srStopDuration   = config.silenceRemove.stopDuration
+    srStartDuration  = config.silenceRemove.startDuration
+    srEnabled        = config.silenceRemove.enabled
+    aTrimStart       = config.aTrim.start
   
-    log.info "srStartPeriods: $srStartPeriods"
-    log.info "srStartSilence: $srStartSilence"
-    log.info "srStopSilence:  $srStopSilence"
-    log.info  "srStopDuration: $srStopDuration"
+    log.debug "aTrimStart      : $aTrimStart"
+    log.debug "srStartPeriods  : $srStartPeriods"
+    log.debug "srStartSilence  : $srStartSilence"
+    log.debug "srStartThreshold: $srStartThreshold"
+    log.debug "srStopSilence   : $srStopSilence"
+    log.debug "srStopDuration  : $srStopDuration"
+    log.debug "srStartDuration : $srStartDuration"
+    log.debug "srEnabled       : $srEnabled"
   }
 
   private void loadConfig() {
@@ -151,10 +161,25 @@ class Ffmpeg {
     }
   }
 
+  /**
+   * Trims silence from the start and end of the given audio file using ffmpeg's
+   * silenceremove filter.
+   *
+   * @param mp3FileName the name of the MP3 file to process
+   * Applies silence removal and reverses the audio to trim both edges.
+   */
   void trimAudio( final String mp3FileName ) {
-    final String trimTrackArgs =
-      "areverse,atrim=start=0.2,silenceremove=start_periods=$srStartPeriods:start_silence=0.1:start_threshold=$srStartSilence:stop_silence=$srStopSilence:stop_duration=$srStopDuration"
-    final String filter = "$q$trimTrackArgs,$trimTrackArgs$q"
+    final String trimTrackEdgeArgs =
+      "silenceremove=$srStartPeriods:" +
+      "start_duration=$srStartDuration:" +
+      "start_threshold=$srStartThreshold:" +
+      "stop_silence=$srStopSilence:" +
+      "detection=peak," +
+      "aformat=dblp," +
+      "areverse"
+
+    log.debug trimTrackEdgeArgs
+    final String filter = "$q${trimTrackEdgeArgs},${trimTrackEdgeArgs}$q"
 
     filterTrack('trimSilence', filter, mp3FileName)
   }
