@@ -1,6 +1,6 @@
 @echo off
 setlocal ENABLEDELAYEDEXPANSION
-set spotDL="spotdl-4.4.2-win32.exe"
+set spotDL="spotdl-4.4.1-win32.exe"
 set lyrics=--lyrics genius musixmatch
 
 if not exist "%~dp0bin"\!spotDL! (
