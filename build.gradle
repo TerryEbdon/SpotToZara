@@ -45,7 +45,7 @@ tasks.withType(AbstractCopyTask).configureEach {
 }
 
 def builtDate = new Date()
-project.version = 'v3.0.0'
+project.version = 'v3.0.1'
 
 jar {
   manifest {
