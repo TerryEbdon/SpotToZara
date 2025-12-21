@@ -1,8 +1,7 @@
 [![Dependabot Updates][dependabot-badge]][dependabot-link]
 
 [dependabot-badge]: https://github.com/TerryEbdon/ZaraListToLog/actions/workflows/dependabot/dependabot-updates/badge.svg
-[dependabot-link]:
-    https://github.com/TerryEbdon/ZaraListToLog/actions/workflows/dependabot/dependabot-updates
+[dependabot-link]: https://github.com/TerryEbdon/ZaraListToLog/actions/workflows/dependabot/dependabot-updates
 
 ## Prerequisites
 
