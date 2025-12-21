@@ -59,7 +59,7 @@ jar {
 }
 
 dependencies {
-  implementation 'org.apache.groovy:groovy-all:4.0.28'
+  implementation 'org.apache.groovy:groovy-all:5.0.3'
 
   // This dependency is used by the application.
   implementation 'com.google.guava:guava:33.5.0-jre'
